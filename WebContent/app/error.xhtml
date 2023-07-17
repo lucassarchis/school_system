@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<f:view locale="#{localeBean.locale}">
+<h:head>
+	<meta charset="UTF-8" />
+	<title>#{m.tituloError}</title>
+
+	<h:outputStylesheet library="CSS" name="style12345.css" />
+</h:head>
+
+<h:body>
+	<h1>#{m.tituloError}</h1>
+
+
+	<h:form id="frm" class="blocos">
+	<p:messages autoUpdate="true" style="text-align: center;"/>
+		<h3>#{m.h3Error}</h3>
+		<h4>#{m.h4Error}</h4>
+		<div class="ui-g">
+				<a href="/app/home.xhtml"><br />
+						
+						 <p:graphicImage
+						title="#{m.h3Error}"
+						value="/resources/images/error404.png" width="400px" />
+				</a>
+			</div>
+	</h:form>
+</h:body>
+</f:view>
+</html>

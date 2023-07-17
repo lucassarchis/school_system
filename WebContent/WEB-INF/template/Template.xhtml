@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<f:view locale="#{localeBean.locale}">
+<h:head>
+	<meta charset="UTF-8" />
+	<title><ui:insert name="titulo" /></title>
+
+	<h:outputStylesheet library="CSS" name="style12345.css" />
+</h:head>
+
+<h:body id="frm">
+<h:form>
+	<p:menubar id="navBar">
+			<p:menuitem value="#{m.home}" url="home.xhtml" />
+			<p:menuitem value="#{m.cursos}" url="gerir_cursos.xhtml" />
+			<p:menuitem value="#{m.professores}" url="gerir_professores.xhtml" />
+			<p:menuitem value="#{m.alunos}" url="gerir_alunos.xhtml" />
+			<p:menuitem value="#{m.graficos}" url="graficos.xhtml" />
+			<p:menuitem value="Português" style="position: absolute; right: 175px;" action="#{localeBean.setLanguagePT}" update="@all"/>
+			<p:menuitem value="English" style="position: absolute; right: 85px;" action="#{localeBean.setLanguageEN}" update="@all"/>
+			<p:menuitem  style="position: absolute; right: 6px;"
+			value="Logout" url="../security/logout.xhtml"/>
+	</p:menubar>
+</h:form>
+	<h1>
+		<ui:insert name="titulo" />
+	</h1>
+	
+	<h3><p:outputLabel value="#{m.atualmenteLogado} #{loginBean.usuario.nomeCompleto}"/></h3>
+
+	<div id="conteudo">
+		<ui:insert name="conteudo" />
+	</div>
+	
+	<h:form>
+		<p:confirmDialog global="true">
+		 <p:commandButton value="#{m.nao}" icon="fa fa-remove" styleClass="ui-confirmdialog-no"/>
+		 <p:commandButton value="#{m.sim}" icon="fa fa-check" styleClass="ui-confirmdialog-yes"/>
+		</p:confirmDialog>
+	</h:form>
+	
+</h:body>
+</f:view>
+</html>

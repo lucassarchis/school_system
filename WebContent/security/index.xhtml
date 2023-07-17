@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html lang="#{localeBean.language}"
+xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<f:view locale="#{localeBean.locale}">
+<h:head>
+	<meta charset="UTF-8" />
+	<title>#{m.titulo}</title>
+
+	<h:outputStylesheet library="CSS" name="style12345.css" />
+</h:head>
+
+<h:body>
+	<h1>#{m.titulo}</h1>
+	 <h:form class="blocos">
+	 <p:panelGrid columns="2">
+	 <p:outputLabel value="#{m.lingua}"/>
+            <p:selectOneMenu value="#{localeBean.language}" onchange="submit()">
+            <f:selectItem itemValue="pt" itemLabel="Português" />
+                <f:selectItem itemValue="en" itemLabel="English" />
+                
+            </p:selectOneMenu></p:panelGrid>
+            
+        </h:form>
+
+
+	<h:form id="frm" class="blocos">
+	<p:messages autoUpdate="true" style="text-align: center;"/>
+		<h3>#{m.realizarLogin}</h3>
+		<h:outputText value="#{m.login}" for="username"/>
+		<h:inputText id="username" value="#{loginBean.login}"></h:inputText>
+		<h:message for="username"></h:message>
+		<br></br>
+		<br></br>
+
+		<h:outputText value="#{m.senha}" for="password"/>
+		<h:inputSecret id="password" value="#{loginBean.senha}"></h:inputSecret>
+		<h:message for="password"></h:message>
+		<br></br>
+		<br></br>
+
+		<h:commandButton action="#{loginBean.validateUsernamePassword}"
+			value="#{m.botaoEntrar}" process="frm"></h:commandButton>
+
+		<h:form>
+			<p:confirmDialog global="true">
+				<p:commandButton value="Não" icon="fa fa-remove"
+					styleClass="ui-confirmdialog-no" />
+				<p:commandButton value="Sim" icon="fa fa-check"
+					styleClass="ui-confirmdialog-yes" />
+			</p:confirmDialog>
+		</h:form>
+	</h:form>
+</h:body>
+</f:view>
+</html>

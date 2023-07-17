@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="../WEB-INF/template/Template.xhtml">
+	<h:head>
+		<h:outputStylesheet library="CSS" name="style12345.css" />
+		<title>#{m.tituloGraficos}</title>
+	</h:head>
+
+	<ui:define name="titulo">#{m.tituloGraficos}</ui:define>
+	<ui:define name="conteudo">
+	<p:separator></p:separator>
+		<h:form id="grafico">
+			<div style="width: 100%; margin: 0 auto;">
+				<h:panelGroup layout="block" style="width:100%;">
+					<div style="width: 100%;">
+						<script type="text/javascript"
+							src="#{request.contextPath}/resources/js/google-charts-loader.js" />
+						<h:outputScript>
+						google.charts.load('current', {'packages':[ 'corechart' ]});
+						google.charts.setOnLoadCallback(drawChartPie);
+			
+						function drawChartPie() { 
+						var data = google.visualization.arrayToDataTable([
+							['Usuario', 'Quantidade'],
+				          ['Professores', #{graficosBean.numeroProfessores}],
+				          ['Alunos', #{graficosBean.numeroAlunos}]
+				        ]);
+				
+				        var options = {
+				          title: 'Relação de Professores e Alunos',
+				          is3D: true,
+				        };
+				
+				        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+				
+				        chart.draw(data, options);
+			      }
+	</h:outputScript>
+
+						<h:form id="form-grafico-pie">
+
+							<center><h:panelGroup layout="block">
+								<h:panelGroup style="width:100%;" layout="block">
+									
+										<div id="piechart"
+											style="width: 50%; height: 270px; margin-left: 0;"></div>
+									
+								</h:panelGroup>
+
+							</h:panelGroup>
+</center>
+						</h:form>
+
+					</div>
+				</h:panelGroup>
+
+			</div>
+		</h:form>
+		
+		<p:separator></p:separator>
+		<h:form>
+			<div style="width: 100%; margin: 0 auto;">
+				<h:panelGroup layout="block" style="width:100%;">
+					<div style="width: 100%;">
+						<script type="text/javascript"
+							src="#{request.contextPath}/resources/js/google-charts-loader.js" />
+						<h:outputScript>
+						google.charts.load('current', {'packages':[ 'bar' ]});
+						google.charts.setOnLoadCallback(drawChartBar);
+			
+						function drawChartBar() { 
+						var data = google.visualization.arrayToDataTable([
+							['Curso', 'Alunos'],
+							#{graficosBean.cursosEAlunos}
+				        ]);
+				
+				        var options = {
+				        width: 800,
+       					   legend: { position: 'none' },
+          				chart: {
+            			title: 'Alunos por curso',
+           				 subtitle: 'Quantidade de alunos' },
+          				axes: {
+            			x: {
+            			  0: { side: 'top', label: 'Cursos'}
+            			}
+        				  },
+        				  bar: { groupWidth: "50%" },
+				        };
+				        
+				
+				        var chart = new google.charts.Bar(document.getElementById('bar'));
+				        chart.draw(data, google.charts.Bar.convertOptions(options))
+			      }
+	</h:outputScript>
+
+						<h:form id="form-grafico-bar">
+
+							<h:panelGroup layout="block">
+								<center><h:panelGroup style="width:100%;" layout="block">
+									
+										<div id="bar"
+											style="width: 75%; height: 270px; margin-left: 0;"></div>
+									
+								</h:panelGroup>
+</center>
+							</h:panelGroup>
+
+						</h:form>
+
+					</div>
+				</h:panelGroup>
+
+			</div>
+		</h:form>
+		
+		<p:separator></p:separator>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="../WEB-INF/template/Template.xhtml">
+
+	<ui:define name="titulo">#{m.tituloCursos}</ui:define>
+
+	<ui:define name="conteudo">
+
+		<f:metadata>
+			<f:viewAction action="#{cursoBean.getCursosTodos}"></f:viewAction>
+		</f:metadata>
+
+		<h:body>
+
+			<h:form  id="tabela">
+
+				<p:messages id="msgTabela" />
+				<p:toolbar  style="width: 60%; margin: auto;">
+				<f:facet name="left">
+				<p:commandButton 
+					actionListener="#{cursoBean.prepararNovoCurso}"
+					value="#{m.novoCurso}"
+					icon="fa fa-plus"
+					oncomplete="PF('cursoDialogWidgetVar').show()"
+					update="tabela:cursoDialog" process="@this">
+					<p:resetInput target="tabela:cursoDialog" />
+				</p:commandButton>
+				
+				<p:commandButton
+				value="#{m.excluirTodosCursos}"
+							actionListener="#{cursoBean.excluirTodos}"
+							update="tabelaCursos"
+							process="@this tabelaCursos" icon="fa fa-trash">
+							<p:confirm header="Confirmação de Exclusão"
+								message="Deseja EXCLUIR TODOS os CURSOS ??" />
+				</p:commandButton>
+				
+				
+				
+				</f:facet>
+				</p:toolbar>
+				<p:spacer value="10px"/>
+				<p:toolbar id="toolbar" style="width: 60%; margin: auto;">
+				<f:facet name="left">
+				<p:inputText id="termoPesquisa" placeholder="#{m.placePesquisaCurso}"
+							size="26" value="#{cursoBean.termoPesquisa}">
+							<p:ajax event="keyup" update="tabela"
+								listener="#{cursoBean.pesquisar}" />
+				</p:inputText>
+				</f:facet>
+				</p:toolbar>
+				<p:dataTable 	tableStyle="table-layout:auto"
+								style="width: 60%; margin: auto;"
+								value="#{cursoBean.listaCursos}"
+								var="curso"
+								id="tabelaCursos"
+								paginator="true"
+								rows="10"
+								paginatorPosition="bottom"
+								selectionMode="single"
+								selection="#{cursoBean.cursinho}"
+								rowKey="#{curso.id}">
+								
+					<p:ajax event="rowSelect"
+							update="tabelaCursos"/>
+
+					<p:ajax event="rowUnselect"
+							update="tabelaCursos" />
+
+					<p:column 	styleClass="centeredColumnContent"
+								style="width: 20%;"
+								headerText="#{m.nomeCurso}">
+								
+						<h:outputText value="#{curso.nomeCurso}" />
+						
+					</p:column>
+					
+					<p:column 	styleClass="centeredColumnContent"
+								style="width: 20%;"
+								headerText="#{m.professorResponsavel}">
+								
+						<h:outputText value="#{curso.professor.nomeCompleto}" />
+						
+					</p:column>
+					<p:column
+								style="width: 20%;"
+								headerText="#{m.alunosMatricul}">
+								
+						<ui:repeat 	varStatus="metadata" var="aluno"
+									value="#{curso.alunos}">
+									
+							<h:outputText value="#{metadata.index + 1}. #{aluno.nomeCompleto} " />
+							<p:separator rendered="#{!metadata.last}"/>
+							
+						</ui:repeat>
+						
+					</p:column>
+					<p:column 	styleClass="centeredColumnContent"
+					style="width: 10%;"
+								headerText="#{m.acoesCursos}">
+								
+						<p:commandButton 	disabled="#{cursoBean.cursinho ne curso}"
+											icon="fa fa-eye"
+											oncomplete="PF('visualizarCursoDialogWidgetVar').show()"
+											update="tabela:visualizarCursoDialog" process="@this">
+											<p:resetInput target="tabela:visualizarCursoDialog" />
+						</p:commandButton>
+								
+						<p:commandButton 	disabled="#{cursoBean.cursinho ne curso}"
+											icon="fa fa-edit"
+											oncomplete="PF('cursoDialogWidgetVar').show()"
+											update="tabela:cursoDialog" process="@this">
+											<p:resetInput target="tabela:cursoDialog" />
+						</p:commandButton>
+						
+						
+						<p:commandButton 	disabled="#{cursoBean.cursinho ne curso}"
+											icon="fa fa-trash"
+											update="tabela"
+											process="@this"
+											actionListener="#{cursoBean.excluirCurso}">
+						</p:commandButton>
+						
+					</p:column>
+				</p:dataTable>
+			
+				
+				
+				<p:dialog 	
+					id="cursoDialog"
+					header="#{m.gerenciarCursos}"
+					widgetVar="cursoDialogWidgetVar"
+					modal="true"
+					resizable="false"
+					closeOnEscape="true">
+							
+				<p:messages 
+					id="cursoMessages" />
+				
+				<p:defaultCommand
+					target="commandSalvar"
+					scope="cursoDialog" />
+					
+				<h:panelGrid
+					id="cursoPanelGrid"
+					columns="2"
+					rendered="#{cursoBean.curso ne null}">
+					
+					<p:outputLabel
+						value="#{m.nomeDoCurso}"
+						for="nomeDoCurso" />
+					
+					<p:inputText
+						id="nomeDoCurso"
+						required="true"
+						requiredMessage="#{m.requiredMsgCurso}"
+						size="30"
+						minlength="3"
+						maxlength="120"
+						value="#{cursoBean.curso.nomeCurso}"
+						label="#{m.nomeCurso}">
+						<f:validateLength minimum="3" ></f:validateLength>
+						</p:inputText>
+						
+					<p:commandButton 
+						id="commandSalvar"
+						value="#{m.gravarCurso}"
+						actionListener="#{cursoBean.gravarCurso}"
+						update="cursoPanelGrid cursoMessages tabelaCursos toolbar"
+						oncomplete="if(!args.validationFailed) PF('cursoDialogWidgetVar').hide()"
+						process="cursoDialog" />
+				</h:panelGrid>
+				
+				</p:dialog>
+				
+				<p:dialog 	
+					id="visualizarCursoDialog"
+					header="#{m.infoCursos}"
+					widgetVar="visualizarCursoDialogWidgetVar"
+					modal="true"
+					resizable="false"
+					closeOnEscape="true">
+				
+				<p:defaultCommand
+					target="commandFechar"
+					scope="visualizarCursoDialog" />
+					
+				<h:panelGrid
+					id="cursoPanelGrid2"
+					columns="2"
+					rendered="#{cursoBean.curso ne null}">
+					
+					<p:outputLabel
+						value="#{m.nomeDoCurso}" style="font-weight: bold;"/>
+					
+					<p:outputLabel
+						value="#{cursoBean.curso.nomeCurso}">
+						</p:outputLabel>
+					<p:separator></p:separator><p:separator></p:separator>	
+					<p:outputLabel
+						value="#{m.professorResponsavel}" style="font-weight: bold;"/>
+					
+					<p:outputLabel
+						value="#{cursoBean.curso.professor.nomeCompleto}">
+					</p:outputLabel>
+					<p:separator></p:separator><p:separator></p:separator>
+					<p:outputLabel value="#{m.alunosMatricul}" style="font-weight: bold;"/>
+								
+						<ui:repeat 	varStatus="metadata" var="aluno"
+									value="#{cursoBean.curso.alunos}">
+									
+							<p:outputLabel value="#{metadata.index + 1}. #{aluno.nomeCompleto} " />
+							<p:separator rendered="#{metadata.odd}"></p:separator>
+							
+						</ui:repeat>
+						
+					<p:commandButton 
+						id="commandFechar"
+						value="#{m.fechar}"
+						actionListener="PF('visualizarCursoDialogWidgetVar').hide()"
+						oncomplete="PF('visualizarCursoDialogWidgetVar').hide()"/>
+				</h:panelGrid>
+				
+				</p:dialog>
+
+				
+			</h:form>
+
+		</h:body>
+
+	</ui:define>
+</ui:composition>

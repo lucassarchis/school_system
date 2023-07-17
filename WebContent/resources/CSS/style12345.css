@@ -1,0 +1,51 @@
+@charset "utf-8";
+
+* {
+	font-family: 'Courier New', Courier, monospace, 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+	background-color: rgb(rgb(39, 41, 56), green, blue);
+}
+
+h1, h3 {
+	text-align: center;
+}
+
+.blocos {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.ui-g-4 {
+	text-align: center;
+}
+
+.ui-g-4 a {
+	text-decoration: none;
+	color: rgb(94, 92, 100);
+}
+
+td.centeredColumnContent{
+    text-align: center;
+}
+
+#footer {
+	text-align: center;
+	bottom: 0;
+	vertical-align: middle;
+	width: 99%;
+	height: 2.5rem;
+	margin-top: 20px, auto;
+	color: rgb(240, 248, 255);
+	background-color: rgb(147, 141, 255);
+	position: absolute;
+}
+
+#navBar {
+	color: white;
+}
+
+.selectMenu {
+	width: 300px;
+}

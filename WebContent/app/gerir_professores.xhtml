@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="../WEB-INF/template/Template.xhtml">
+
+	<ui:define name="titulo">#{m.tituloProfessores}</ui:define>
+
+	<ui:define name="conteudo">
+	
+		<f:metadata>
+			<f:viewAction action="#{professorBean.getProfessorTodos}"></f:viewAction>
+		</f:metadata>
+
+		<h:body>
+
+			<h:form id="tabela">
+
+				<p:messages id="msgTabela" />
+				<p:toolbar style="width: 60%; margin: auto;">
+					<f:facet name="left">
+						<p:commandButton actionListener="#{professorBean.prepararNovoProfessor}"
+							value="#{m.novoProfessor}" icon="fa fa-plus"
+							oncomplete="PF('professorDialogWidgetVar').show()"
+							update="tabela:professorDialog" process="@this">
+							<p:resetInput target="tabela:professorDialog" />
+						</p:commandButton>
+
+						<p:commandButton value="#{m.excluirTodosProfessor}"
+							actionListener="#{professorBean.excluirTodos}" update="tabelaProfessores"
+							process="@this tabelaProfessores" icon="fa fa-trash">
+							<p:confirm header="#{m.confimExcluir}"
+								message="#{m.msgExcluir}" />
+						</p:commandButton>
+						
+						<p:commandButton value="#{m.downloadPDF}" immediate="true" onclick="PrimeFaces.monitorDownload(start, stop);"
+							actionListener="#{professorBean.gerarTabelaPdf}" update="tabelaProfessores"
+							process="@this tabelaProfessores" icon="fa fa-fw fa-file-pdf-o">
+							<p:fileDownload value="#{professorBean.file}" />
+						</p:commandButton>
+
+					</f:facet>
+				</p:toolbar>
+				<p:spacer value="10px" />
+				<p:toolbar id="toolbar" style="width: 60%; margin: auto;">
+					<f:facet name="left">
+						<p:inputText id="termoPesquisa" placeholder="#{m.placePesquisaProfessor}"
+							size="26" value="#{professorBean.termoPesquisa}">
+							<p:ajax event="keyup" update="tabela"
+								listener="#{professorBean.pesquisar}" />
+						</p:inputText>
+					</f:facet>
+				</p:toolbar>
+				
+				<p:dataTable tableStyle="table-layout:auto"
+					style="width: 60%; margin: auto;" value="#{professorBean.listaProfessores}"
+					var="professor" id="tabelaProfessores" paginator="true" rows="10"
+					paginatorPosition="bottom" selectionMode="single"
+					selection="#{professorBean.professorIntermediario}" rowKey="#{professor.id}">
+
+					<p:ajax event="rowSelect" update="tabelaProfessores" />
+
+					<p:ajax event="rowUnselect" update="tabelaProfessores" />
+
+					<p:column styleClass="centeredColumnContent" style="width: 20%;"
+						headerText="#{m.nomeProfessor}">
+
+						<h:outputText value="#{professor.nomeCompleto}" />
+
+					</p:column>
+
+					<p:column styleClass="centeredColumnContent" style="width: 20%;"
+						headerText="#{m.cursoMinistrado}">
+
+						<h:outputText value="#{professor.cursoMinistrados.nomeCurso}" />
+
+					</p:column>
+					
+					<p:column styleClass="centeredColumnContent" style="width: 20%;"
+						headerText="#{m.contratacao}">
+
+						<h:outputText value="#{professor.dataContratacao.time}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					
+
+					<p:column styleClass="centeredColumnContent" headerText="#{m.acoesProfessor}" style="width: 10%;">
+					
+					<p:commandButton 	disabled="#{professorBean.professorIntermediario ne professor}"
+											icon="fa fa-eye"
+											oncomplete="PF('visualizarProfessorDialogWidgetVar').show()"
+											update="tabela:visualizarProfessorDialog" process="@this">
+											<p:resetInput target="tabela:visualizarProfessorDialog" />
+						</p:commandButton>
+
+						<p:commandButton disabled="#{professorBean.professorIntermediario ne professor}"
+							icon="fa fa-edit" oncomplete="PF('professorDialogWidgetVar').show()"
+							update="tabela:professorDialog" process="@this">
+							<p:resetInput target="tabela:professorDialog" />
+						</p:commandButton>
+
+						<p:commandButton disabled="#{professorBean.professorIntermediario ne professor}"
+							icon="fa fa-trash" update="tabela" process="@this"
+							actionListener="#{professorBean.excluirProfessor}">
+						</p:commandButton>
+
+					</p:column>
+				</p:dataTable>
+
+
+
+				<p:dialog id="professorDialog" header="#{m.gerenciarProfessor}"
+					widgetVar="professorDialogWidgetVar" modal="true" resizable="false"
+					closeOnEscape="true">
+
+					<p:messages id="professorMessages" />
+
+					<h:panelGrid id="professorPanelGrid" columns="2"
+						rendered="#{professorBean.professor ne null}">
+						
+						<p:outputLabel
+						value="#{m.nomeProfessor}: "
+						for="nomeProfessor" />
+					
+						<p:inputText
+						id="nomeProfessor"
+						required="true"
+						requiredMessage="#{m.requiredMsgProfessor}"
+						size="30"
+						minlength="3"
+						maxlength="120"
+						value="#{professorBean.professor.nomeCompleto}"
+						label="#{m.nomeProfessor}">
+						<f:validateLength minimum="3" ></f:validateLength>
+						</p:inputText>
+						
+						<h:outputLabel value="#{m.dataNascimentoProfessor}: " for="dataNascimento" />
+						<p:calendar id="dataNascimento" pattern="dd/MM/yyyy" size="30"
+						value="#{professorBean.professor.dataNascimento}" />
+						
+						<h:outputLabel value="#{m.loginProfessor}: " for="loginProfessor" />
+
+						<p:inputText id="loginProfessor"
+							value="#{professorBean.professor.login}" size="30"
+							required="true" requiredMessage="#{m.requiredMsgLoginProfessor}" />
+
+						<h:outputLabel value="#{m.senhaProfessor}" for="senhaProfessor" />
+
+						<p:inputText id="senhaProfessor" size="30"
+							value="#{professorBean.professor.senha}"
+							required="true" requiredMessage="#{m.requiredMsgSenhaProfessor}" />
+
+						<h:outputLabel value="#{m.dataContratacao}: " for="dataContrata" />
+
+						<p:calendar id="dataContrata" pattern="dd/MM/yyyy" size="30"
+						value="#{professorBean.professor.dataContratacao}" />
+						
+						<h:outputLabel value="#{m.cursoMinistrado}: " for="curso" size="30" />
+						<p:selectOneMenu style="vertical-align:middle;" value="#{professorBean.professor.cursoId}"
+						id="curso" rendered="#{professorBean.professor ne null}">
+						<f:selectItem itemLabel="#{m.selecione}" />
+						<f:selectItems id="select"
+							value="#{professorBean.cursosSemProfessor}"
+							var="curso" itemLabel="#{curso.nomeCurso}"
+							itemValue="#{curso.id}" />
+						</p:selectOneMenu>
+						<br></br>
+						<p:commandButton id="commandSalvar" value="#{m.salvarTudo}"
+							actionListener="#{professorBean.gravarProfessor}"
+							update="professorPanelGrid professorMessages tabela toolbar"
+							oncomplete="if(!args.validationFailed) PF('professorDialogWidgetVar').hide()"
+							process="professorDialog" />
+
+					</h:panelGrid>
+
+				</p:dialog>
+				
+				<p:dialog id="visualizarProfessorDialog" header="#{m.infoProfessor}"
+					widgetVar="visualizarProfessorDialogWidgetVar" modal="true" resizable="false"
+					closeOnEscape="true">
+
+					<h:panelGrid id="visualizarProfessorPanelGrid" columns="2"
+						rendered="#{professorBean.professor ne null}">
+						
+						<p:outputLabel value="#{m.nomeProfessor}: " style="font-weight: bold;"/>
+						<p:outputLabel value="#{professorBean.professor.nomeCompleto}"/>
+						<p:separator></p:separator><p:separator></p:separator>
+						<p:outputLabel value="#{m.dataNascimento}: " style="font-weight: bold;"/>
+						<p:outputLabel pattern="dd/MM/yyyy" value="#{professorBean.professor.dataNascimento}">
+						<f:convertDateTime pattern="dd/MM/yyyy"/></p:outputLabel>
+						<p:separator></p:separator><p:separator></p:separator>
+						<p:outputLabel value="#{m.loginProfessor}: " style="font-weight: bold;"/>
+						<p:outputLabel value="#{professorBean.professor.login}"/>
+						<p:separator></p:separator><p:separator></p:separator>
+						<p:outputLabel value="#{m.senhaProfessor}: " style="font-weight: bold;"/>
+						<p:outputLabel value="#{professorBean.professor.senha}"/>
+						<p:separator></p:separator><p:separator></p:separator>
+						<p:outputLabel value="#{m.dataContratacao}: " style="font-weight: bold;"/>
+						<p:outputLabel pattern="dd/MM/yyyy" value="#{professorBean.professor.dataContratacao}">
+						<f:convertDateTime pattern="dd/MM/yyyy"/></p:outputLabel>
+						<p:separator></p:separator><p:separator></p:separator>
+						<p:outputLabel value="#{m.cursoMinistrado}: " style="font-weight: bold;"/>
+						<p:outputLabel value="#{professorBean.professor.cursoMinistrados.nomeCurso}"/>
+						<p:separator></p:separator><p:separator></p:separator>
+						<p:commandButton 
+						id="commandFechar"
+						value="#{m.fechar}"
+						actionListener="PF('visualizarProfessorDialogWidgetVar').hide()"
+						oncomplete="PF('visualizarProfessorDialogWidgetVar').hide()"/>
+					</h:panelGrid>
+
+				</p:dialog>
+
+
+			</h:form>
+
+		</h:body>
+
+	</ui:define>
+</ui:composition>
